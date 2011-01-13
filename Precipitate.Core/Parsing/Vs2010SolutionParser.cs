@@ -47,7 +47,7 @@ namespace Precipitate.Parsing
                 select i;
         }
         
-        private static readonly Parser<string> QuotedString = Quoted(StringUntil.Character('"'));
+        private static readonly Parser<string> QuotedString = Quoted(ParseString.UntilCharacter('"'));
 
         private static readonly Parser<string> Guid =
             from leading in Parse.WhiteSpace.Many()
@@ -60,20 +60,20 @@ namespace Precipitate.Parsing
         
         private static readonly Parser<KeyValuePair<string, string>> KeyValue =
             from leading in Parse.WhiteSpace.Many()
-            from key in StringUntil.Whitespace()
+            from key in ParseString.UntilWhitespace()
             from ws in Parse.WhiteSpace.Many()
             from equal in Parse.Char('=')
-            from value in StringUntil.Whitespace()
+            from value in ParseString.UntilWhitespace()
             select new KeyValuePair<string, string>(key, value);
         
         private static readonly Parser<SolutionProjectSection> ProjectSection =
             from leading in Parse.WhiteSpace.Many()
             from openKeyWord in Parse.String("ProjectSection(")
-            from type in StringUntil.Character(')')
+            from type in ParseString.UntilCharacter(')')
             from closeParen in Parse.Char(')')
             from ws1 in Parse.WhiteSpace.Many().Until(Parse.Char('='))
             from ws2 in Parse.WhiteSpace.Many()
-            from preOrPost in StringUntil.Whitespace()
+            from preOrPost in ParseString.UntilWhitespace()
             from keyValuePairs in KeyValue.Many()
             from ws3 in Parse.WhiteSpace.Many()
             from endKeyWord in Parse.String("EndProjectSection")
@@ -101,7 +101,7 @@ namespace Precipitate.Parsing
             return
                 from leading in Parse.WhiteSpace.Many()
                 from header in Parse.String("Microsoft Visual Studio Solution File, Format Version ")
-                from versionString in StringUntil.Whitespace()
+                from versionString in ParseString.UntilWhitespace()
                 from newLine in Parse.WhiteSpace.Many()
                 from pound in Parse.AnyChar.Until(Parse.Char('\n'))
                 from projects in Project.Many()
