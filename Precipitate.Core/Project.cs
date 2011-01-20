@@ -14,19 +14,14 @@ namespace Precipitate
         public string RootNamespace { get; set; }
         public string AssemblyName { get; set; }
         public string TargetFrameworkVersion { get; set; }
-        public string TargetFrameworkProfile { get; set; }
 
         public IEnumerable<ProjectConfiguration> Configurations { get; set; }
         public IEnumerable<Reference> References { get; set; }
+        public IEnumerable<ProjectReference> ProjectReferences { get; set; }
 
-        public static Project Open(string filePath)
+        public override string ToString()
         {
-            return Open(filePath, Path.GetFileNameWithoutExtension(filePath));
-        }
-
-        public static Project Open(string filePath, string name)
-        {
-            return new ProjectParser().Parse(filePath, name);
+            return this.PrettyPrint(0);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Precipitate
 
         public string PrettyPrint(int depth)
         {
-            var d = depth.Depth();
+            var d = depth.RepeatCharacter();
 
             var pp = new StringBuilder(String.Format("{0}{1} : {2} : {3}\n", d, Name, Id, Filepath));
 

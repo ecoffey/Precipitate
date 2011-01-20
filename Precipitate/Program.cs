@@ -11,7 +11,20 @@ namespace Precipitate
     {
         static void Main(string[] args)
         {
-            
+            var solutionFile = args[0];
+            var projectName = args[1];
+
+            var solutionParserFactory = new SolutionParserFactory();
+
+            var solutionParser = solutionParserFactory.ForFile(solutionFile);
+
+            var solution = solutionParser.ParseSolution();
+
+            Console.WriteLine(solution);
+
+            var project = solution.OpenProject(projectName);
+
+            Console.WriteLine(project);
         }
     }
 }

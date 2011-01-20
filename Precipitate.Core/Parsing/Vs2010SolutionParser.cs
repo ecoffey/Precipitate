@@ -18,7 +18,7 @@ namespace Precipitate.Parsing
             _fileContents = new Lazy<string>(() => fileContents);
         }
 
-        internal Vs2010SolutionParser(string name, string filePath)
+        public Vs2010SolutionParser(string name, string filePath)
         {
             _name = name;
             _filePath = filePath;

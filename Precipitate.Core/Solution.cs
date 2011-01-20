@@ -32,26 +32,12 @@ namespace Precipitate
                 throw new InvalidOperationException("Could not find specified Project");
             }
 
-            return Project.Open(projectPointer.Filepath, projectPointer.Name);
-        }
-
-        public string PrettyPrint(int depth)
-        {
-            var d = depth.Depth();
-
-            var pp = new StringBuilder(String.Format("{2}{0} : {1}\n", Name, Filename, d));
-
-            foreach (var project in Projects)
-            {
-                pp.AppendFormat("{0}\n", project.PrettyPrint(depth + 1));
-            }
-
-            return pp.ToString();
+            return new ProjectParser().Parse(projectPointer.Filepath, projectPointer.Name);
         }
 
         public override string ToString()
         {
-            return PrettyPrint(0);
+            return this.PrettyPrint(0);
         }
     }
 }

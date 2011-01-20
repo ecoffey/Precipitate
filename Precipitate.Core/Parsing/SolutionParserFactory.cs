@@ -36,6 +36,8 @@ namespace Precipitate.Parsing
             {
                 case "11.00":
                     return new Vs2010SolutionParser(name, filepath, fileContents);
+                case "10.00":
+                    return new Vs2010SolutionParser(name, filepath, fileContents);
                 default:
                     throw new InvalidOperationException("Unknown version string");
             }

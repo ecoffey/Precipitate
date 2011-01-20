@@ -19,11 +19,11 @@ namespace Precipitate
 
         public string PrettyPrint(int depth)
         {
-            var d = depth.Depth();
+            var d = depth.RepeatCharacter();
 
             var pp = new StringBuilder(String.Format("{0}{1} : {2}\n", d, Type, When));
 
-            var d2 = (depth + 1).Depth();
+            var d2 = (depth + 1).RepeatCharacter();
             foreach (var pair in Pairs)
             {
                 pp.AppendFormat("{0}{1} : {2}\n", d2, pair.Key, pair.Value);
