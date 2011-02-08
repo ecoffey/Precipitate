@@ -20,12 +20,24 @@ namespace Precipitate
             Name = name;
             Filename = filename;
             Version = version;
-            Projects = projects;
+            Projects = projects.ToList();
         }
 
         public Project OpenProject(string name)
         {
             var projectPointer = Projects.Where(p => p.Name == name).SingleOrDefault();
+
+            if (projectPointer == null)
+            {
+                throw new InvalidOperationException("Could not find specified Project");
+            }
+
+            return new ProjectParser().Parse(projectPointer.Filepath, projectPointer.Name);
+        }
+
+        public Project OpenProjectId(string id)
+        {
+            var projectPointer = Projects.Where(p => p.Id == id).SingleOrDefault();
 
             if (projectPointer == null)
             {

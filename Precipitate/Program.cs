@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Sprache;
 using Precipitate.Parsing;
 
 namespace Precipitate
@@ -11,20 +12,44 @@ namespace Precipitate
     {
         static void Main(string[] args)
         {
-            var solutionFile = args[0];
-            var projectName = args[1];
+            Console.Write("Pausing for debugger attach, hit enter to continue...");
+            Console.ReadLine();
 
-            var solutionParserFactory = new SolutionParserFactory();
+            try
+            {
 
-            var solutionParser = solutionParserFactory.ForFile(solutionFile);
+                var projectFile = args[0];
 
-            var solution = solutionParser.ParseSolution();
+                Document document;
+                using (var fileStream = File.Open(projectFile, FileMode.Open))
+                using (var streamReader = new StreamReader(fileStream))
+                {
+                    var contents = streamReader.ReadToEnd();
 
-            Console.WriteLine(solution);
+                    document = XmlParser.Document.End().Parse(contents);
+                }
 
-            var project = solution.OpenProject(projectName);
+                Console.WriteLine(document);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
-            Console.WriteLine(project);
+            //var solutionFile = args[0];
+            //var projectName = args[1];
+
+            //var solutionParserFactory = new SolutionParserFactory();
+
+            //var solutionParser = solutionParserFactory.ForFile(solutionFile);
+
+            //var solution = solutionParser.ParseSolution();
+
+            //Console.WriteLine(solution);
+
+            //var project = solution.OpenProject(projectName);
+
+            //Console.WriteLine(project);
         }
     }
 }

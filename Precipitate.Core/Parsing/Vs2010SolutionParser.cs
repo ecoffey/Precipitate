@@ -82,7 +82,7 @@ namespace Precipitate.Parsing
         private static readonly Parser<SolutionProject> Project =
             from leading in Parse.WhiteSpace.Many()
             from projectKeyWord in Parse.String("Project(")
-            from id in QuotedGuid
+            from projectTypeId in QuotedGuid
             from rightParen in Parse.Char(')')
             from ws in Parse.WhiteSpace.Many().Until(Parse.Char('='))
             from projectName in QuotedString
@@ -94,7 +94,7 @@ namespace Precipitate.Parsing
             from sections in ProjectSection.Many()
             from ws3 in Parse.WhiteSpace.Many()
             from endKeyWord in Parse.String("EndProject")
-            select new SolutionProject(projectId, projectName, filePath, sections);
+            select new SolutionProject(projectId, projectName, projectTypeId, filePath, sections);
 
         private static Parser<Solution> Solution(string name, string filename)
         {

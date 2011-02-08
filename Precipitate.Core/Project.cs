@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 
 namespace Precipitate
 {
     public sealed class Project
     {
+        public XElement Document { get; set; }
+        public XElement ReferencesNode { get; set; }
+
         public string Id { get; set; }
         public string Name { get; set; }
         public string Configuration { get; set; }

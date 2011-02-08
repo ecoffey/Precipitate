@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace Precipitate
@@ -20,7 +21,7 @@ namespace Precipitate
 
     public class Reference
     {
-        public string Assembly { get; set; }
+        public AssemblyName AssemblyName { get; set; }
         public string SpecificVersion { get; set; }
         public string HintPath { get; set; }
 
@@ -60,19 +61,23 @@ namespace Precipitate
             var outputType = fileDocument.Descendants(ns + "OutputType").Single().Value;
             var rootNamespace = fileDocument.Descendants(ns + "RootNamespace").Single().Value;
             var assemblyName = fileDocument.Descendants(ns + "AssemblyName").Single().Value;
-            var targetFrameworkVersion = fileDocument.Descendants(ns + "TargetFrameworkVersion").Single().Value;
+            var targetFrameworkVersion =
+            fileDocument.Descendants(ns + "TargetFrameworkVersion").SingleOrDefault().SafeValue();
 
             var propertyGroups = fileDocument.Descendants(ns + "PropertyGroup").Where(e => e.HasAttributes);
             var configurations = ParseConfigurations(ns, propertyGroups);
 
             var referenceGroups = fileDocument.Descendants(ns + "Reference");
-            var references = ParseReferences(ns, referenceGroups);
+            XElement referencesNode;
+            var references = ParseReferences(ns, referenceGroups, out referencesNode);
 
             var projectReferenceGroups = fileDocument.Descendants(ns + "ProjectReference");
             var projectReferences = ParseProjectReferences(ns, projectReferenceGroups);
 
             return new Project
                        {
+                           Document = fileDocument,
+                           ReferencesNode = referencesNode,
                            Id = id,
                            Name = name,
                            Configuration = configuration,
@@ -98,20 +103,52 @@ namespace Precipitate
 
         private static IEnumerable<ProjectConfiguration> ParseConfigurations(XNamespace ns, IEnumerable<XElement> propertyGroups)
         {
-            return propertyGroups.Select(propertyGroup => new ProjectConfiguration
-                                                              {
-                                                                  OutputPath = propertyGroup.Descendants(ns + "OutputPath").Single().Value
-                                                              });
+            foreach (var propertyGroup in propertyGroups)
+            {
+                var conditionAttr = propertyGroup.Attribute("Condition");
+
+                string configuration = null, platform = null;
+                if (conditionAttr != null)
+                {
+                    var value = conditionAttr.Value.Split(new[] {"=="}, 2, StringSplitOptions.None)[1];
+
+                    var values = value.Split('|');
+
+                    configuration = values[0].Trim('\'', ' ');
+                    platform = values[1].Trim('\'', ' ');
+                }
+
+                var outputPath = propertyGroup.Descendants(ns + "OutputPath").Single().Value;
+                yield return new ProjectConfiguration
+                             {
+                                 Configuration = configuration ?? String.Empty,
+                                 Platform = platform ?? String.Empty,
+                                 OutputPath = outputPath
+                             };
+            }
         }
 
-        private static IEnumerable<Reference> ParseReferences(XNamespace ns, IEnumerable<XElement> referenceGroups)
+        private static IEnumerable<Reference> ParseReferences(XNamespace ns, IEnumerable<XElement> referenceGroups, out XElement referencesNode)
+        {
+            referencesNode = referenceGroups.FirstOrDefault();
+
+            if (referencesNode != null)
+            {
+                referencesNode = referencesNode.Ancestors(ns + "ItemGroup").Single();
+            }
+
+            return ParseReferencesImpl(referenceGroups, ns);
+        }
+
+        private static IEnumerable<Reference> ParseReferencesImpl(IEnumerable<XElement> referenceGroups, XNamespace ns)
         {
             foreach (var referenceGroup in referenceGroups)
             {
                 var reference = new Reference
-                                    {
-                                        Assembly = referenceGroup.Attribute("Include").Value
-                                    };
+                                {
+                                    AssemblyName = new AssemblyName(referenceGroup.Attribute("Include").Value)
+                                };
+                
 
                 var specificVersion = referenceGroup.Descendants(ns + "SpecificVersion").SingleOrDefault();
                 var hintPath = referenceGroup.Descendants(ns + "HintPath").SingleOrDefault();

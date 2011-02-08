@@ -47,7 +47,9 @@
     <Compile Include="Parsing\ISolutionParser.cs" />
     <Compile Include="Parsing\ISolutionParserFactory.cs" />
     <Compile Include="Parsing\ParseString.cs" />
+    <Compile Include="Parsing\SafeXElementValue.cs" />
     <Compile Include="Parsing\SolutionParserFactory.cs" />
+    <Compile Include="Parsing\XmlParser.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Parsing\ProjectParser.cs" />
     <Compile Include="SolutionProjectSection.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Sprache;
 
 namespace Precipitate.Parsing
@@ -18,6 +19,14 @@ namespace Precipitate.Parsing
             return
                 from leading in Parse.WhiteSpace.Many()
                 from word in Parse.Char(p => p != endingCharacter, "Consume until we hit endingCharacter").Many().Text()
+                select word;
+        }
+
+        internal static Parser<string> UntilCharacters(params char[] characters)
+        {
+            var charactersLookup = new HashSet<char>(characters);
+            return
+                from word in Parse.Char(p => !charactersLookup.Contains(p), "Consume until we hit a specified character").Many().Text()
                 select word;
         }
     }

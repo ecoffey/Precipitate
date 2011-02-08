@@ -63,7 +63,7 @@ namespace Precipitate
         {
             var d = depth.RepeatCharacter();
 
-            return String.Format("{0}{1} {2}", d, reference.Assembly, reference.HintPath);
+            return String.Format("{0}{1} {2}", d, reference.AssemblyName, reference.HintPath);
         }
 
         public static string PrettyPrint(this ProjectReference projectReference, int depth)

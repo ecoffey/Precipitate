@@ -4,17 +4,25 @@ using System.Text;
 
 namespace Precipitate
 {
+    public static class SolutionProjectType
+    {
+        public static readonly string Project = "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC";
+        public static readonly string SolutionFolder = "2150E333-8FDC-42A3-9474-1A3956D46DE8";
+    }
+
     public sealed class SolutionProject
     {
         public string Id { get; private set; }
         public string Name { get; private set; }
+        public string ProjectTypeId { get; set; }
         public string Filepath { get; private set; }
         public IEnumerable<SolutionProjectSection> Sections { get; private set; }
 
-        public SolutionProject(string id, string name, string filepath, IEnumerable<SolutionProjectSection> sections)
+        public SolutionProject(string id, string name, string projectTypeId, string filepath, IEnumerable<SolutionProjectSection> sections)
         {
             Id = id;
             Name = name;
+            ProjectTypeId = projectTypeId;
             Filepath = filepath;
             Sections = sections;
         }
